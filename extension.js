@@ -5,13 +5,6 @@ var enabled = false;
 var uMich = document.getElementById("uMich");
 var stony = document.getElementById("stony");
 
-// chrome.storage.sync.get("umichOpacity", (result) => {
-//     console.log(result["umichOpacity"]);
-// });
-// chrome.storage.sync.get("stonyOpacity", (result) => {
-//     console.log(result["stonyOpacity"]);
-// });
-
 // uMich Button
 uMich.addEventListener("click", () => {
     if (!enabled) {
@@ -20,7 +13,10 @@ uMich.addEventListener("click", () => {
             button.disabled = false;
         });
         enabled = true;
-    } 
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, "UMich");
+        });
+    }
 });
 
 // Stony Button
@@ -31,6 +27,9 @@ stony.addEventListener("click", () => {
             button.disabled = false;
         });
         enabled = true;
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, "Stony");
+        });
     }
 });
 
