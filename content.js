@@ -1,4 +1,4 @@
-var uMichID = "1258";
+/* var uMichID = "1258";
 var stonyID = "971";
 
 if (location.protocol !== "https:") {
@@ -21,29 +21,40 @@ async function uMich() {
         var instructors = document.getElementsByClassName("Instructor");
         for (let i = 0; i < instructors.length; i++) {
             var name = instructors[i].innerHTML;
+            for (let seq of ["  she-her-hers", "  she-her", "  she-hers", " he-him-his", " He-Him-His", " 'he-him-his'"]) {
+                name = name.replaceAll(seq, "");
+            }
+            if (name.includes(", ")) {
+                name = name.replace(", ", ",");
+            }
             name = name.replace(" ", ",");
             name += " ";
             name = name.replace(" ","");
             var nameArray = name.split(",");
             var fullName = nameArray[1] + " " + nameArray[0];
-            // if (nameArray[2]) {
-            //     instructors[i].innerHTML = nameArray[1] + " " + nameArray[2] + " " + nameArray[0];
-            // }
-            // else {
             instructors[i].innerHTML = fullName;
-            // }
             profs.add(fullName);
         }
         let info = await infoScraper(uMichID, profs);
     for (let instructor of instructors) {
         const rating = document.createElement("p");
         if (info[instructor.innerHTML]) {
-            var ratingText = "Overall Rating: " + info[instructor.innerHTML].rating + " / 5 Based on " + info[instructor.innerHTML].numRatings + " ratings.";
+            var instructorRating = info[instructor.innerHTML].rating;
+            var numRating = info[instructor.innerHTML].numRatings;
+            var emoji = "";
+            if (0 <= instructorRating && instructorRating < 3) {
+                emoji = "😶🗑️";
+            } else if (3 <= instructorRating && instructorRating < 4) {
+                emoji = "😐🆗";
+            } else if (4 <= instructorRating && instructorRating <= 5) {
+                emoji = "😄📈";
+            }
+            var ratingText = emoji + " Overall Rating: " + instructorRating + " / 5 Based on " + numRating + " ratings. ";
             rating.appendChild(document.createTextNode(ratingText));
             instructor.setAttribute("href", "https://www.ratemyprofessors.com/ShowRatings.jsp?tid=" + info[instructor.innerHTML].tid);
         }
         else {
-            rating.appendChild(document.createTextNode("Professor Not Found"));
+            rating.appendChild(document.createTextNode("🤔 Professor Not Found"));
         }
         instructor.appendChild(rating);
     }
@@ -74,6 +85,8 @@ async function stony() {
                 link.href = "https://www.ratemyprofessors.com/ShowRatings.jsp?tid=" + info[node.innerHTML].tid;
                 link.setAttribute("target", "_blank");
                 link.innerHTML = node.innerHTML;
+                link.style.color = "black";
+                link.style.textDecoration = "none";
     
                 // Set link
                 node.innerHTML = "";
@@ -83,20 +96,21 @@ async function stony() {
                 // Add rating
                 let rating = info[link.innerHTML].rating;
                 let ratingNode = document.createElement("span");
-                ratingNode.innerHTML += "Rating: " + rating + "/ 5" + "<br/>";
-                if (0 < rating && rating < 1) {
-                    ratingNode.style.color = "black";
-                } else if (0 <= rating && rating <= 1) {
+                ratingNode.innerHTML += "Rating: " + rating + " / 5"
+                if (0 <= rating && rating < 2) {
                     ratingNode.style.color = "red";
-                } else if (1 < rating && rating <= 2) {
+                    ratingNode.innerHTML += " 🗑️";
+                } else if (2 <= rating && rating < 3) {
                     ratingNode.style.color = "orange";
-                } else if (2 < rating && rating <= 3) {
-                    ratingNode.style.color = "yellow";
-                } else if (3 < rating && rating <= 4) {
+                    ratingNode.innerHTML += " 😐";
+                } else if (3 <= rating && rating <= 4) {
                     ratingNode.style.color = "green";
-                } else {
+                    ratingNode.innerHTML += " �";
+                } else if (4 <= rating && rating <= 5) {
                     ratingNode.style.color = "blue";
+                    ratingNode.innerHTML += " �";
                 }
+                ratingNode.innerHTML += "<br/>";
                 node.appendChild(ratingNode);
     
     
@@ -125,7 +139,7 @@ async function infoScraper(schoolID, profs) {
         let lastProf = pageProfs[pageProfs.length - 1];
         for (let prof of profs) {
             let profName = parseName(prof);
-            if (firstProf["tLname"].localeCompare(profName[1]) <= 0 && profName[1].localeCompare(lastProf["tLname"]) <= 0) {
+            if (firstProf["tLname"].toLowerCase().localeCompare(profName[1]) <= 0 && profName[1].localeCompare(lastProf["tLname"].toLowerCase()) <= 0) {
                 console.log("Found a match: " + profName[0] + profName[1] + " is suspected to be on page" + i);
                 for (let pageProf of pageProfs) {
                     if (profName[0] === pageProf["tFname"].toLowerCase() && profName[1] === pageProf["tLname"].toLowerCase()) {
@@ -161,8 +175,8 @@ function parseName(name) {
     
     let names = name.trim().split(" ");
     if (names.length >= 2) {
-        return [names[0].toLowerCase(), names[names.length-1].toLowerCase()];
+        return [names[0].toLowerCase(), names[1].toLowerCase()];
     } else {
         return ["",""];
     }
-}
+} */
