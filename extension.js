@@ -141,7 +141,6 @@ function uMichReady() {
             for (let seq of [/\r?\n|\r/g, /(\r\n|\n|\r)/gm, "<br>", "staff", "; homepage"]) {
                 name = name.replaceAll(seq, "");
             }
-            
             let names = name.trim().split(" ");
             if (names.length >= 2) {
                 return [names[0].toLowerCase(), names[1].toLowerCase()];
@@ -234,12 +233,13 @@ function uMichReady() {
             }
             instructor.appendChild(rating);
         }
+    }
+    uMichigan();
     if (document.readyState === "complete" || document.readyState === "loaded" || document.readyState === "interactive") {
-        var randomInstructor = document.getElementsByClassName("Instructor")[Math.floor(Math.random() * profs.size)].getElementsByTagName('p')[0].innerHTML;
+        var randomInstructor = document.getElementsByClassName("Instructor")[0].getElementsByTagName('p')[0].innerHTML;
         if (!randomInstructor.includes("Overall Rating") || !randomInstructor.includes("Professor Not Found")) {
             uMichigan();
         }
-    }
     }
 }
 
