@@ -4,10 +4,6 @@ var enabled = false;
 var uMich = document.getElementById("uMich");
 var stony = document.getElementById("stony");
 
-// if (window.location.protocol !== "https:") {
-//     window.location.protocol = "https:";
-// }
-
 // uMich Button
 uMich.addEventListener("click", () => {
     if (!enabled) {
@@ -59,6 +55,7 @@ document.getElementById("disable").addEventListener("click", function() {
     }
 });
 
+// Makes sure that whichever button is selected stays selected.
 document.body.onload = () => {
     chrome.storage.sync.get("umichOpacity", (result) => {
         let umichOpacity = result["umichOpacity"];
@@ -78,64 +75,16 @@ document.body.onload = () => {
     });
 }
 
-// schoolID : int
-// profs: Set<String>
-async function infoScraper(schoolID, profs) {
-    let numOfProfs = 20 + (await ((await fetch("https://www.ratemyprofessors.com/filter/professor/?&page=1&filter=teacherlastname_sort_s+asc&query=*%3A*&queryoption=TEACHER&queryBy=schoolId&sid=" + schoolID)).json())).remaining;
-    let numOfPages = Math.ceil(numOfProfs / 20);
-    let i = 1;
-    info = {};
-    let numProfsAdded = 0;
-    while (i <= numOfPages) {
-        let pageProfs = (await ((await fetch("https://www.ratemyprofessors.com/filter/professor/?&page=" + i + "&filter=teacherlastname_sort_s+asc&query=*%3A*&queryoption=TEACHER&queryBy=schoolId&sid=" + schoolID)).json())).professors;
-        let firstProf = pageProfs[0];
-        let lastProf = pageProfs[pageProfs.length - 1];
-        for (let prof of profs) {
-            let profName = parseName(prof);
-            if (firstProf["tLname"].toLowerCase().localeCompare(profName[1]) <= 0 && profName[1].localeCompare(lastProf["tLname"].toLowerCase()) <= 0) {
-                console.log("Found a match: " + profName[0] + profName[1] + " is suspected to be on page" + i);
-                for (let pageProf of pageProfs) {
-                    if (profName[0] === pageProf["tFname"].toLowerCase() && profName[1] === pageProf["tLname"].toLowerCase()) {
-                        console.log("found " + profName[0] + " " + profName[1] + "'s ratings. adding them to info")
-                        info[prof] = {
-                            rating: pageProf["overall_rating"],
-                            numRatings: pageProf["tNumRatings"],
-                            dept: pageProf["tDept"],
-                            tid: pageProf["tid"]
-                        }
-                        numProfsAdded += 1;
-                        console.log(info);
-                    }
-                }
-                break;
-            }
-        }
-        if (numProfsAdded >= profs.size) {
-            break;
-        }
-        i += 1;
-    }
-    return info;
-}
-
-// Returns object of filtered name
-// Format -> {first: firstName, last: lastName}
-function parseName(name) {
-    name = name.toLowerCase();
-    for (let seq of [/\r?\n|\r/g, /(\r\n|\n|\r)/gm, "<br>", "staff", "; homepage"]) {
-        name = name.replaceAll(seq, "");
-    }
-    
-    let names = name.trim().split(" ");
-    if (names.length >= 2) {
-        return [names[0].toLowerCase(), names[1].toLowerCase()];
-    } else {
-        return ["",""];
-    }
-}
-
 function uMichReady() {
+    // Only runs script if it was never run.
+    if (document.readyState === "complete" || document.readyState === "loaded" || document.readyState === "interactive") {
+        if (document.getElementsByClassName("Instructor").length === 0) {
+            uMichigan();
+        }
+    }
     async function uMichigan() {
+        // Name Parser
+        // Format -> [firstName, lastName}
         function parseName(name) {
             name = name.toLowerCase();
             for (let seq of [/\r?\n|\r/g, /(\r\n|\n|\r)/gm, "<br>", "staff", "; homepage"]) {
@@ -157,8 +106,10 @@ function uMichReady() {
                 var myobj = document.getElementById("remove");
                 myobj.remove();
             }
-            var name = instructors[i].innerHTML;
-            for (let seq of ["  she-her-hers", "  she-her", "  she-hers", " he-him-his", " He-Him-His", " 'he-him-his'"]) {
+            if (instructors[i] != null) {
+                var name = instructors[i].innerHTML;
+            }
+            for (let seq of ["  she-her-hers", "  she-her", "  she-hers", " he-him-his", " He-Him-His", " 'he-him-his'", " - she her", "- he him"]) {
                 name = name.replaceAll(seq, "");
             }
             if (name.includes(", ")) {
@@ -168,11 +119,18 @@ function uMichReady() {
             name += " ";
             name = name.replace(" ","");
             var nameArray = name.split(",");
+            if (nameArray[1] == "Christopher") {
+                nameArray[1] = "Chris";
+            }
             var fullName = nameArray[1] + " " + nameArray[0];
-            instructors[i].innerHTML = fullName;
+            if (instructors[i] != null) {
+                instructors[i].innerHTML = fullName;
+            }
             profs.add(fullName);
         }
-        var uMichID = 1258;
+        const uMichID = 1258;
+        // schoolID : int
+        // profs: Set<String>
         async function infoScraper(schoolID, profs) {
             let numOfProfs = 20 + (await ((await fetch("https://www.ratemyprofessors.com/filter/professor/?&page=1&filter=teacherlastname_sort_s+asc&query=*%3A*&queryoption=TEACHER&queryBy=schoolId&sid=" + schoolID)).json())).remaining;
             let numOfPages = Math.ceil(numOfProfs / 20);
@@ -185,11 +143,9 @@ function uMichReady() {
                 let lastProf = pageProfs[pageProfs.length - 1];
                 for (let prof of profs) {
                     let profName = parseName(prof);
-                    if (firstProf["tLname"].toLowerCase().localeCompare(profName[1]) <= 0 && profName[1].localeCompare(lastProf["tLname"].toLowerCase()) <= 0) {
-                        console.log("Found a match: " + profName[0] + profName[1] + " is suspected to be on page" + i);
+                    if (profName[1].localeCompare(firstProf["tLname"].toLowerCase()) >= 0 && profName[1].localeCompare(lastProf["tLname"].toLowerCase()) <= 0) {
                         for (let pageProf of pageProfs) {
                             if (profName[0] === pageProf["tFname"].toLowerCase() && profName[1] === pageProf["tLname"].toLowerCase()) {
-                                console.log("found " + profName[0] + " " + profName[1] + "'s ratings. adding them to info")
                                 profInfo[prof] = {
                                     rating: pageProf["overall_rating"],
                                     numRatings: pageProf["tNumRatings"],
@@ -197,10 +153,8 @@ function uMichReady() {
                                     tid: pageProf["tid"]
                                 }
                                 numProfsAdded += 1;
-                                console.log(profInfo);
                             }
                         }
-                        break;
                     }
                 }
                 if (numProfsAdded >= profs.size) {
@@ -234,14 +188,8 @@ function uMichReady() {
             instructor.appendChild(rating);
         }
     }
-    uMichigan();
-    if (document.readyState === "complete" || document.readyState === "loaded" || document.readyState === "interactive") {
-        var randomInstructor = document.getElementsByClassName("Instructor")[0].getElementsByTagName('p')[0].innerHTML;
-        if (!randomInstructor.includes("Overall Rating") || !randomInstructor.includes("Professor Not Found")) {
-            uMichigan();
-        }
-    }
 }
+
 
 function stonyReady() {
     chrome.storage.sync.set({"stonyRunning": true}, () => {
