@@ -10,3 +10,7 @@ Before            |  After
 :-------------------------:|:-------------------------:
 ![image](https://user-images.githubusercontent.com/72951726/126093126-09702091-667b-4340-8cec-ed8b8ca773b6.png) |  ![image](https://user-images.githubusercontent.com/72951726/126093111-2cb179b0-fa93-4946-83f4-40f9c306d392.png)
 
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/72951726/126093126-09702091-667b-4340-8cec-ed8b8ca773b6.png" width="500" />
+  <img src="https://user-images.githubusercontent.com/72951726/126093111-2cb179b0-fa93-4946-83f4-40f9c306d392.png" width="500" /> 
+</p>
