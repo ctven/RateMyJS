@@ -8,4 +8,5 @@ A Rate My Professor chrome extension for University of Michigan and Stony Brook 
 
 Before            |  After
 :-------------------------:|:-------------------------:
-![image](https://user-images.githubusercontent.com/72951726/126092385-19a6fe56-8361-4202-b210-2b10b2bb7cd7.png) |  ![image](https://user-images.githubusercontent.com/72951726/126092682-9775c278-daf4-451f-af0d-152fe96d03c9.png)
+![image](https://user-images.githubusercontent.com/72951726/126093126-09702091-667b-4340-8cec-ed8b8ca773b6.png) |  ![image](https://user-images.githubusercontent.com/72951726/126093111-2cb179b0-fa93-4946-83f4-40f9c306d392.png)
+
