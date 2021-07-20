@@ -1,7 +1,6 @@
 import requests
 import json
 import math
-import time
 
 class RateMyProfScraper:
         def __init__(self, schoolid, first_name, last_name):
@@ -68,16 +67,3 @@ class RateMyProfScraper:
             temp_jsonpage = json.loads(page.content)
             num_of_prof = temp_jsonpage["remaining"] + 20
             return num_of_prof
-
-
-start = time.time()
-david = RateMyProfScraper(971, "David", "Green")
-for k in david.info:
-    print(k)
-    print(david.info[k])
-    print(" ")
-
-print(david.professor_link)
-
-print()
-print(str(time.time()-start) + " seconds")
