@@ -192,6 +192,9 @@ function uMichReady() {
 
 
 function stonyReady() {
+    if (!window.location.href.startsWith("https://psns.cc.stonybrook.edu/")) {
+        return;
+    }
     chrome.storage.sync.set({"stonyRunning": true}, () => {
     });
 
@@ -213,9 +216,6 @@ function stonyReady() {
 
         let frames = document.getElementById("ptifrmtgtframe").contentWindow;
         let document1 = frames.document;
-        if (!window.location.href.startsWith("https://psns.cc.stonybrook.edu/")) {
-            return;
-        }
         let nodes = document1.querySelectorAll("[id^=MTG_INSTR]");
         let profSet = new Set();
         nodes.forEach((node) => {
